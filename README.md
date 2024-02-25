@@ -1,1 +1,2 @@
-# AMPLab_assignment1
+# amplab_assignment_1
+ AMPLab assignment 1
