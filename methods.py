@@ -94,8 +94,6 @@ class EssentiaClasses:
         # Use embeddings on classifier models
         genre_Predictions = self.getMusicStyles(discogsEmbeddings)
         instrVoice = self.getInstrumental(discogsEmbeddings)
-        instrumental = instrVoice[:, 0]
-        voice = instrVoice[:, 1]
         danceability = self.getDanceability(discogsEmbeddings)[:, 0]
         arouVal = self.getArousalAndValence(musicnnEmbeddings)
         arousal = arouVal[:, 0]
@@ -106,8 +104,9 @@ class EssentiaClasses:
         self.genreNumber = self.genreActivations.argmax()
         self.genre = self.genre_list[self.genreNumber]
         self.parentGenre = self.parent_genre_list[self.genreNumber]
-        self.instrumental = instrumental.mean(axis=0)
-        self.voice = voice.mean(axis=0)
+        instrVoice = instrVoice.mean(axis=0)
+        # If the first value is higher, it is instrumental, otherwise it is voice
+        self.instrumental = "Instrumental" if instrVoice[0] > instrVoice[1] else "Voice"
         self.danceability = danceability.mean(axis=0)
         self.arousal = arousal.mean(axis=0)
         self.valence = valence.mean(axis=0)
@@ -134,11 +133,10 @@ class EssentiaClasses:
             'keyEdma': self.keyEdma,
             'scaleEdma': self.scaleEdma,
             'loudness': self.loudness,
-            'instrumentalAvg': self.instrumental,
-            'voiceAvg': self.voice,
-            'danceabilityAvg': self.danceability,
-            'arousalAvg': self.arousal,
-            'valenceAvg': self.valence,
+            'instrumental': self.instrumental,
+            'danceability': self.danceability,
+            'arousal': self.arousal,
+            'valence': self.valence,
         }
 
         return features
