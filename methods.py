@@ -12,12 +12,49 @@ essentia.log.warningActive = False               # deactivate the warning level
 essentia.log.infoActive = False                  # deactivate the info level
 
 import essentia.standard as es
-import logging
+import json
 
 
 
 class EssentiaClasses:
+    """
+    Class for extracting audio features from audio files using Essentia
+    """
+
+    # Class variables
+    metadata_dict = {}
+    genre_list = []
+    parent_genre_list = []
+
+    @classmethod
+    def load_genre_metadata(cls, metadata_file):
+        """
+        Load the discogs metadata json file and extract the genre list
+
+        Parameters:
+        metadata_file (str): The path to the discogs metadata json file
+
+        Returns:
+        None
+        """
+        # Read discogs metadata json file to get the genre corresponding to each index
+        with open(metadata_file) as file:
+            cls.metadata_dict = json.load(file)
+
+        cls.genre_list = cls.metadata_dict["classes"]
+        # Reduce genre list based on parent genre, i.e. the genre before the -- in each value
+        cls.parent_genre_list = [genre.split('--')[0] for genre in cls.genre_list]
+    
     def __init__(self):
+        """
+        Initialise the Essentia classes for feature extraction
+
+        Parameters:
+        None
+
+        Returns:
+        None
+        """
        
         # Initialise the classes
         self.getRhythm = es.RhythmExtractor2013()
@@ -66,7 +103,9 @@ class EssentiaClasses:
 
         # Average classifier output frames
         self.genreActivations = genre_Predictions.mean(axis=0)
-        self.genre = self.genreActivations.argmax()
+        self.genreNumber = self.genreActivations.argmax()
+        self.genre = self.genre_list[self.genreNumber]
+        self.parentGenre = self.parent_genre_list[self.genreNumber]
         self.instrumental = instrumental.mean(axis=0)
         self.voice = voice.mean(axis=0)
         self.danceability = danceability.mean(axis=0)
@@ -112,14 +151,16 @@ class EssentiaClasses:
         audio_file (str): The path to the audio file
 
         Returns:
-        features (dict): A dictionary containing the genre predictions
+        genre_predictions (dict): A dictionary containing the genre predictions
 
         """
 
         genre_predictions = {
             'audio_file': audio_file,
             'genrePredictions': self.genreActivations,
-            'genre': self.genre
+            'genreNumber': self.genreNumber,
+            'genre': self.genre,
+            'parentGenre': self.parentGenre
         }
 
         return genre_predictions
