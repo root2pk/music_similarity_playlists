@@ -149,19 +149,24 @@ class EssentiaClasses:
         audio_file (str): The path to the audio file
 
         Returns:
-        genre_predictions (dict): A dictionary containing the genre predictions
+        genre_predictions (dict): A dictionary containing the genre predictions, and genre activations in indvidual columns
 
         """
 
         genre_predictions = {
             'audio_file': audio_file,
-            'genrePredictions': self.genreActivations,
             'genreNumber': self.genreNumber,
             'genre': self.genre,
-            'parentGenre': self.parentGenre
-        }
+            'parentGenre': self.parentGenre,
+       }
+        # Convert the numpy array to a list and add it to the dictionary
+        genre_activations_list = self.genreActivations.tolist()
+        for i, activation in enumerate(genre_activations_list):
+            genre_predictions[f'activation_{i}'] = activation
 
         return genre_predictions
+
+
 
 def search_audio_files(directory, file_types=['.mp3', '.wav', '.flac', '.aac']):
     """
@@ -181,7 +186,7 @@ def search_audio_files(directory, file_types=['.mp3', '.wav', '.flac', '.aac']):
     for root, dirs, files in os.walk(directory):
         for file in files:
             if file.endswith(tuple(file_types)):
-                audio_files.append(os.path.join(root, file))
+                audio_files.append(os.path.relpath(os.path.join(root, file), os.getcwd()))
 
     return audio_files
 
