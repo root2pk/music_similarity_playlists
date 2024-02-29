@@ -3,9 +3,9 @@ import json
 import pandas as pd
 
 m3u_filepaths_file = 'playlists/streamlit.m3u8'
-GENRE_ANALYSIS_PATH = 'genre_predictions.csv'
+GENRE_ANALYSIS_PATH = 'data/genre_predictions.csv'
 METADATA_FILE_PATH = 'metadata/discogs-effnet-bs64-1.json'
-OTHER_FEATURES_PATH = 'features.csv'
+OTHER_FEATURES_PATH = 'data/features.csv'
 
 def load_genre_analysis():
     # Read discogs metadata json file to get the genre corresponding to each index

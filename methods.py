@@ -14,8 +14,6 @@ essentia.log.infoActive = False                  # deactivate the info level
 import essentia.standard as es
 import json
 
-
-
 class EssentiaClasses:
     """
     Class for extracting audio features from audio files using Essentia
@@ -25,6 +23,7 @@ class EssentiaClasses:
     metadata_dict = {}
     genre_list = []
     parent_genre_list = []
+    batchSize = 64                                      # Change to implement GPU support
 
     @classmethod
     def load_genre_metadata(cls, metadata_file):
@@ -44,6 +43,7 @@ class EssentiaClasses:
         cls.genre_list = cls.metadata_dict["classes"]
         # Reduce genre list based on parent genre, i.e. the genre before the -- in each value
         cls.parent_genre_list = [genre.split('--')[0] for genre in cls.genre_list]
+        
     
     def __init__(self):
         """
@@ -62,12 +62,12 @@ class EssentiaClasses:
         self.getKeyKrumhansl = es.KeyExtractor(profileType='krumhansl')
         self.getKeyEdma = es.KeyExtractor(profileType='edma')
         self.getLoudness = es.LoudnessEBUR128()
-        self.getDiscogsEmbeddings = es.TensorflowPredictEffnetDiscogs(graphFilename="weights/discogs-effnet-bs64-1.pb", output="PartitionedCall:1")
-        self.getMusiCNNEmbeddings = es.TensorflowPredictMusiCNN(graphFilename="weights/msd-musicnn-1.pb", output="model/dense/BiasAdd")
-        self.getMusicStyles = es.TensorflowPredict2D(graphFilename="weights/genre_discogs400-discogs-effnet-1.pb", input="serving_default_model_Placeholder", output="PartitionedCall:0")
-        self.getInstrumental = es.TensorflowPredict2D(graphFilename="weights/voice_instrumental-discogs-effnet-1.pb", output="model/Softmax")
-        self.getDanceability = es.TensorflowPredict2D(graphFilename="weights/danceability-discogs-effnet-1.pb", output="model/Softmax")
-        self.getArousalAndValence = es.TensorflowPredict2D(graphFilename="weights/emomusic-msd-musicnn-2.pb", output="model/Identity")
+        self.getDiscogsEmbeddings = es.TensorflowPredictEffnetDiscogs(graphFilename="weights/discogs-effnet-bs64-1.pb", output="PartitionedCall:1",)
+        self.getMusiCNNEmbeddings = es.TensorflowPredictMusiCNN(graphFilename="weights/msd-musicnn-1.pb", output="model/dense/BiasAdd",)
+        self.getMusicStyles = es.TensorflowPredict2D(graphFilename="weights/genre_discogs400-discogs-effnet-1.pb", input="serving_default_model_Placeholder", output="PartitionedCall:0", batchSize=self.batchSize)
+        self.getInstrumental = es.TensorflowPredict2D(graphFilename="weights/voice_instrumental-discogs-effnet-1.pb", output="model/Softmax", batchSize=self.batchSize)
+        self.getDanceability = es.TensorflowPredict2D(graphFilename="weights/danceability-discogs-effnet-1.pb", output="model/Softmax", batchSize=self.batchSize)
+        self.getArousalAndValence = es.TensorflowPredict2D(graphFilename="weights/emomusic-msd-musicnn-2.pb", output="model/Identity", batchSize=self.batchSize)
 
     def extract_features(self, audio_mono, audio_stereo):
         """
@@ -165,8 +165,6 @@ class EssentiaClasses:
             genre_predictions[f'activation_{i}'] = activation
 
         return genre_predictions
-
-
 
 def search_audio_files(directory, file_types=['.mp3', '.wav', '.flac', '.aac']):
     """
