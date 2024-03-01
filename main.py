@@ -1,3 +1,9 @@
+"""
+This script is used to analyze audio files and extract features from them. The features are then written to a CSV file.
+
+"""
+
+
 import pandas as pd
 from tqdm import tqdm
 import methods as m

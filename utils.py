@@ -1,6 +1,14 @@
+"""
+Helper file for the Streamlit apps to load and display the audio tracks and other features.
+"""
+
+
 # Required modules
 import json
 import pandas as pd
+import streamlit as st
+import random
+import os.path
 
 m3u_filepaths_file = 'playlists/streamlit.m3u8'
 GENRE_ANALYSIS_PATH = 'data/genre_predictions.csv'
@@ -102,3 +110,35 @@ def load_key_scale_analysis():
     df.drop(columns=[2, 3, 4, 5, 6, 7], inplace=True)
 
     return df
+
+def display_tracks(mp3s, max_tracks, shuffle, m3u_filepath):
+    """
+    Display the audio tracks based on the selected options
+
+    Parameters:
+    mp3s (list): List of mp3 file paths
+    max_tracks (int): Maximum number of tracks to display
+    shuffle (bool): Whether to shuffle the tracks
+    m3u_filepath (str): The path to store the M3U playlist
+
+    Returns:
+    None
+    """
+    if max_tracks:
+        mp3s = mp3s[:max_tracks]
+        st.write('Using top', len(mp3s), 'tracks from the results.')
+
+    if shuffle:
+        random.shuffle(mp3s)
+        st.write('Applied random shuffle.')
+
+    # Store the M3U8 playlist.
+    with open(m3u_filepath, 'w') as f:
+        # Modify relative mp3 paths to make them accessible from the playlist folder.
+        mp3_paths = [os.path.join('..', mp3) for mp3 in mp3s]
+        f.write('\n'.join(mp3_paths))
+        st.write(f'Stored M3U playlist (local filepaths) to `{m3u_filepath}`.')
+
+    st.write('Audio previews for the first 10 results:')
+    for mp3 in mp3s[:10]:
+        st.audio(mp3, format="audio/mp3", start_time=0)

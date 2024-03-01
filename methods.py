@@ -1,5 +1,12 @@
 """
-Methods for extracting audio features from audio files
+Methods for extracting audio features from audio files.
+
+The EssentiaClasses class is used to extract audio features from audio files using Essentia. The class is also used to load the discogs metadata json file and extract the genre list.
+
+The search_audio_files function is used to search for audio files in a given directory.
+
+The load_audio_file function is used to load an audio file from a given path, downmix to mono and resample to 16kHz.
+
 """
 
 import os
