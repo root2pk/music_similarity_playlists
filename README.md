@@ -1,4 +1,4 @@
-
+## Audio feature extraction, analysis and music similarity playlists generation using Python and Streamlit
 
 `main.py` runs the main script to load and extract all the features from the dataset. It runs a loop through the audio files, loads them, and extracts features from them.
 Features, genre activation values, predicted genres and predicted parent genres are written into .csv files.
@@ -18,3 +18,6 @@ Streamlit app used to compute tracks similar to a query track. Uses cosine simil
 
 `extract_embeddings.py`
 This script extracts embeddings from the models, and ideally should be integrated into main.py.
+
+Uses [Essentia](http://essentia.upf.edu.) for audio feature extraction and analysis.
+[1] Bogdanov, D., Wack N., Gómez E., Gulati S., Herrera P., Mayor O., et al. (2013). ESSENTIA: an Audio Analysis Library for Music Information Retrieval. International Society for Music Information Retrieval Conference (ISMIR'13). 493-498.
