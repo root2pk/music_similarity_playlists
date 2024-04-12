@@ -21,3 +21,7 @@ This script extracts embeddings from the models, and ideally should be integrate
 
 Uses [Essentia](http://essentia.upf.edu.) for audio feature extraction and analysis.
 [1] Bogdanov, D., Wack N., Gómez E., Gulati S., Herrera P., Mayor O., et al. (2013). ESSENTIA: an Audio Analysis Library for Music Information Retrieval. International Society for Music Information Retrieval Conference (ISMIR'13). 493-498.
+
+Model weights and metadata are obtained from [Essentia models website](https://essentia.upf.edu/models.html)
+
+Sample audio collection used for analysis is obtained from the [MUSAV](https://repositori.upf.edu/handle/10230/54181) dataset.
